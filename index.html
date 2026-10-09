@@ -1,0 +1,646 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Fristindo Jaya Pump</title>
+<style>
+  :root{
+    --bg:#e6edf5;
+    --accent:#0055a6;
+    --text:#0055a6;
+    --text-dim:#4d7fb0;
+    --shadow-light:#ffffff;
+    --shadow-dark:#c3ccd9;
+  }
+  *{box-sizing:border-box;margin:0;padding:0;}
+  html{-webkit-text-size-adjust:100%;text-size-adjust:100%;-webkit-tap-highlight-color:transparent;}
+  html,body{background:var(--bg);color:var(--text);font-family:'Segoe UI',Roboto,-apple-system,sans-serif;min-height:100vh;}
+  body{display:flex;flex-direction:column;align-items:center;padding:28px 16px 60px;}
+  button{font-family:inherit;}
+  button:focus-visible{outline:3px solid var(--accent);outline-offset:3px;}
+
+  .raised{background:var(--bg);box-shadow:8px 8px 16px var(--shadow-dark),-8px -8px 16px var(--shadow-light);}
+  .raised-sm{background:var(--bg);box-shadow:4px 4px 8px var(--shadow-dark),-4px -4px 8px var(--shadow-light);}
+  .pressed{background:var(--bg);box-shadow:inset 4px 4px 8px var(--shadow-dark),inset -4px -4px 8px var(--shadow-light);}
+
+  .view{width:100%;max-width:720px;display:none;}
+  .view.show{display:block;}
+
+  /* ================= KATALOG ================= */
+  .cat-header{display:flex;align-items:center;gap:14px;padding:18px 22px;border-radius:20px;margin-bottom:22px;}
+  .cat-logo-wrap{width:56px;height:56px;border-radius:50%;display:flex;align-items:center;justify-content:center;padding:4px;flex-shrink:0;}
+  .cat-logo{width:100%;height:100%;border-radius:50%;object-fit:cover;}
+  .cat-title{font-size:19px;font-weight:700;letter-spacing:-0.01em;color:var(--accent);overflow-wrap:break-word;}
+
+  .cat-label{font-size:18px;color:var(--text);font-weight:700;margin:0 0 16px 4px;}
+  .list{display:grid;grid-template-columns:repeat(2,1fr);gap:20px;}
+  .item{
+    display:flex;flex-direction:column;align-items:stretch;gap:14px;width:100%;text-align:center;border:none;border-radius:22px;
+    padding:14px 14px 18px;cursor:pointer;color:var(--text);transition:transform .1s ease,box-shadow .15s ease;
+  }
+  .item:active{transform:scale(.98);box-shadow:inset 4px 4px 8px var(--shadow-dark),inset -4px -4px 8px var(--shadow-light);}
+  .avatar{width:100%;aspect-ratio:1/1;border-radius:18px;padding:8px;display:flex;align-items:center;justify-content:center;}
+  .avatar img{width:100%;height:100%;border-radius:12px;object-fit:cover;display:block;}
+  .avatar .fallback{width:100%;height:100%;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:40px;font-weight:800;color:var(--text-dim);}
+  .name{font-size:18px;font-weight:700;line-height:1.3;overflow-wrap:break-word;padding:0 4px;}
+
+  @media (max-width:480px){
+    body{padding:16px 12px 40px;}
+    .cat-header{padding:14px;margin-bottom:18px;}
+    .cat-title{font-size:16px;}
+    .cat-logo-wrap{width:50px;height:50px;}
+    .cat-label{font-size:17px;}
+    .list{gap:14px;}
+    .item{padding:10px 10px 14px;border-radius:20px;gap:10px;}
+    .name{font-size:16px;}
+  }
+
+  /* Pemberitahuan kalau interface pompa belum dimasukkan */
+  #toast{
+    position:fixed;left:50%;bottom:28px;transform:translateX(-50%) translateY(20px);opacity:0;pointer-events:none;
+    padding:14px 22px;border-radius:16px;font-size:14px;font-weight:700;color:var(--accent);max-width:90%;text-align:center;
+    transition:opacity .2s ease,transform .2s ease;z-index:20;
+  }
+  #toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
+
+  /* ============ INTERFACE POMPA (dari kode kamu) ============ */
+  /* Tombol Kembali ke katalog (satu-satunya tambahan) */
+  .kembali-wrap{width:100%;margin-bottom:18px;}
+  .kembali{
+    border:none;border-radius:14px;padding:12px 24px;font-size:14px;font-weight:700;color:var(--accent);cursor:pointer;
+    background:var(--bg);box-shadow:4px 4px 8px var(--shadow-dark),-4px -4px 8px var(--shadow-light);
+  }
+  .kembali:active{box-shadow:inset 3px 3px 6px var(--shadow-dark),inset -3px -3px 6px var(--shadow-light);}
+
+  #detail{color:var(--text);}
+  #detail .header{width:100%;display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;gap:12px;padding:18px 22px;border-radius:20px;margin-bottom:22px;}
+  #detail .header-left{display:flex;align-items:center;gap:14px;min-width:0;flex:1 1 auto;}
+  #detail .header-text{min-width:0;display:flex;flex-direction:column;}
+  #detail .logo-wrap{width:56px;height:56px;border-radius:50%;display:flex;align-items:center;justify-content:center;padding:4px;flex-shrink:0;}
+  #detail .logo{width:100%;height:100%;border-radius:50%;object-fit:cover;}
+  #detail .eyebrow{font-size:19px;letter-spacing:-0.01em;color:var(--eyebrow);font-weight:700;white-space:normal;overflow-wrap:break-word;}
+  #detail .title{font-size:19px;font-weight:700;letter-spacing:-0.01em;color:var(--text);white-space:normal;overflow-wrap:break-word;}
+  #detail .clock{font-variant-numeric:tabular-nums;font-size:12px;color:var(--text-dim);text-align:right;line-height:1.4;padding:10px 14px;border-radius:12px;flex-shrink:0;}
+  #detail .clock span{display:block;}
+  #detail .clock .time{color:var(--text);font-size:14px;font-weight:700;margin-top:2px;}
+  @media (max-width:480px){
+    #detail .header{padding:16px;}
+    #detail .clock{font-size:11px;padding:8px 12px;}
+    #detail .clock .time{font-size:13px;}
+    #detail .title,#detail .eyebrow{font-size:17px;}
+  }
+
+  #scene3d{position:relative;display:none;width:100%;aspect-ratio:16/9;background:#171c22;}
+  #detail .stage{width:100%;border-radius:22px;overflow:hidden;padding:10px;}
+  #detail .video-inner{border-radius:16px;overflow:hidden;}
+  #detail video{width:100%;display:block;background:#000;aspect-ratio:16/9;}
+  #detail .now-playing{display:flex;align-items:center;gap:10px;padding:12px 16px;margin-top:10px;border-radius:12px;font-size:12px;color:var(--text-dim);letter-spacing:0.02em;}
+  #detail .now-playing .dot{width:9px;height:9px;border-radius:50%;background:var(--bg);box-shadow:inset 2px 2px 4px var(--shadow-dark),inset -2px -2px 4px var(--shadow-light);flex-shrink:0;}
+  #detail .now-playing.active .dot{background:var(--accent);box-shadow:0 0 0 4px var(--glow);}
+  #detail .now-playing .label{color:var(--text);font-weight:700;}
+
+  #detail .picker{width:100%;margin-top:26px;}
+  #detail .picker-label{font-size:11px;text-transform:uppercase;letter-spacing:0.12em;color:var(--text-dim);font-weight:700;margin:0 0 14px 4px;}
+  #detail .btn-grid{display:grid;grid-template-columns:1fr;gap:16px;}
+  @media (min-width:600px){ #detail .btn-grid{grid-template-columns:repeat(var(--cols,3),1fr);} }
+  #detail .pump-btn{position:relative;text-align:left;border:none;border-radius:18px;padding:18px 20px;cursor:pointer;transition:box-shadow .15s ease,transform .1s ease;color:var(--text);font-family:inherit;}
+  #detail .pump-btn:active{transform:scale(.98);}
+  #detail .pump-btn.selected{box-shadow:inset 4px 4px 8px var(--shadow-dark),inset -4px -4px 8px var(--shadow-light);}
+  #detail .pump-btn.placeholder{cursor:default;opacity:.55;}
+  #detail .pump-btn.placeholder:active{transform:none;}
+  #detail .pump-name{display:block;font-size:14px;font-weight:700;line-height:1.3;color:var(--text);}
+  #detail .pump-time{display:block;font-size:11px;color:var(--text-dim);margin-top:8px;font-variant-numeric:tabular-nums;font-weight:600;}
+
+  #detail .hint{width:100%;margin-top:26px;padding:16px 20px;border-radius:16px;font-size:12px;color:var(--text-dim);line-height:1.6;}
+</style>
+</head>
+<body>
+
+  <!-- ================= KATALOG ================= -->
+  <div class="view show" id="catalog">
+    <div class="cat-header raised">
+      <div class="cat-logo-wrap raised-sm"><img src="logo.png" alt="Logo" class="cat-logo"></div>
+      <div class="cat-title">FRISTINDO JAYA PUMP</div>
+    </div>
+    <div class="cat-label">Pilih pompa</div>
+    <div class="list" id="list"></div>
+  </div>
+
+  <!-- ================= INTERFACE POMPA ================= -->
+  <div class="view" id="detail">
+    <div class="kembali-wrap"><button class="kembali" id="kembali">Kembali</button></div>
+
+    <div class="header raised">
+      <div class="header-left">
+        <div class="logo-wrap raised-sm"><img src="logo.png" alt="Logo" class="logo"></div>
+        <div class="header-text">
+          <div class="title" id="dTitle"></div>
+          <div class="eyebrow" id="dSub"></div>
+        </div>
+      </div>
+      <div class="clock pressed">
+        <span id="clockLabel">Diakses</span>
+        <span class="time" id="clockTime">--:--:--</span>
+      </div>
+    </div>
+
+    <div class="stage raised">
+      <div class="video-inner">
+        <video id="video" controls playsinline></video>
+        <!-- Panel animasi 3D (dipakai tombol "3D render") -->
+        <div id="scene3d" aria-label="Animasi 3D interaktif. Geser untuk memutar, scroll untuk zoom."></div>
+      </div>
+      <div class="now-playing pressed" id="nowPlaying"></div>
+    </div>
+
+    <div class="picker">
+      <div class="picker-label" id="dLabel"></div>
+      <div class="btn-grid" id="btnGrid"></div>
+    </div>
+
+    <div class="hint pressed" id="dHint"></div>
+  </div>
+
+  <div id="toast" class="raised-sm"></div>
+
+<!-- Animasi 3D untuk ADLS. three.js baru dimuat saat tombol "3D render" ditekan -->
+<script>
+/* Palletizing cell 3D animation. Needs three.js r128 loaded first.
+   Usage: const sc=Scene3D(containerEl); sc.start(); sc.stop(); */
+window.Scene3D=function(container){
+
+const cv=document.createElement('canvas');cv.style.cssText='width:100%;height:100%;display:block;touch-action:none;cursor:grab';container.appendChild(cv);
+const R=new THREE.WebGLRenderer({canvas:cv,antialias:true});
+R.shadowMap.enabled=true;R.setPixelRatio(Math.min(devicePixelRatio,2));
+const S=new THREE.Scene();
+const cam=new THREE.PerspectiveCamera(35,1,.1,100);
+const dm=matchMedia('(prefers-color-scheme: dark)');
+function theme(){S.background=new THREE.Color(0x171c22);floor.material.color.set(0x2a323b)}
+const M=(c,r=.6,m=0)=>new THREE.MeshStandardMaterial({color:c,roughness:r,metalness:m});
+const grey=M(0xc9ccd1,.45,.2),dark=M(0x555b63,.6,.3),post=M(0x7d848c,.5,.5),blue=M(0x1f78c8,.4,.3),blueD=M(0x1560a3,.5,.3),wood=M(0xa98258,.9),red=new THREE.MeshBasicMaterial({color:0xe01b24}),yel=M(0xf1c40f,.5);
+function add(g,mat,x,y,z,p=S,sh=true){const m=new THREE.Mesh(g,mat);m.position.set(x,y,z);m.castShadow=sh;m.receiveShadow=true;p.add(m);return m}
+const BX=(w,h,d)=>new THREE.BoxGeometry(w,h,d),CY=(r,h,s=32)=>new THREE.CylinderGeometry(r,r,h,s);
+S.add(new THREE.HemisphereLight(0xffffff,0x8a94a0,.85));
+const sun=new THREE.DirectionalLight(0xffffff,.9);sun.position.set(5,11,7);sun.castShadow=true;sun.shadow.mapSize.set(2048,2048);
+Object.assign(sun.shadow.camera,{left:-9,right:9,top:9,bottom:-9,near:1,far:30});S.add(sun);
+const floor=add(new THREE.PlaneGeometry(60,60),M(0xd5dbe1,1),0,0,0,S,false);floor.rotation.x=-Math.PI/2;
+add(BX(8.6,.02,5.8),M(0x9aa4ae,.9),0,.01,0,S,false);
+
+// Barrel
+const bc=document.createElement('canvas');bc.width=512;bc.height=256;{const g=bc.getContext('2d');g.fillStyle='#1f78c8';g.fillRect(0,0,512,256);}
+const bmat=[new THREE.MeshStandardMaterial({map:new THREE.CanvasTexture(bc),roughness:.4,metalness:.3}),blueD,blueD];
+const bg=CY(.29,.88);
+function barrel(p,x,y,z,ry=Math.random()*6){const g=new THREE.Group();g.position.set(x,y,z);g.rotation.y=ry;p.add(g);
+ add(bg,bmat,0,0,0,g);add(CY(.27,.02),blueD,0,.44,0,g);add(CY(.07,.03,12),dark,.12,.45,.08,g,false);
+ [-.4,-.3,.3,.4].forEach(h=>{const t=add(new THREE.TorusGeometry(.292,.014,8,32),blueD,0,h,0,g,false);t.rotation.x=Math.PI/2});return g}
+function pallet(x,z,rot,n){const g=new THREE.Group();g.position.set(x,0,z);g.rotation.y=rot;S.add(g);
+ add(BX(1.2,.04,1),wood,0,.14,0,g);[-.5,0,.5].forEach(a=>{add(BX(.12,.1,.95),wood,a,.08,0,g)});[-.4,0,.4].forEach(a=>add(BX(1.2,.03,.14),wood,0,.02,a,g));
+ const pos=[[-.3,-.25],[.3,-.25],[-.3,.25],[.3,.25],[0,0]];
+ for(let i=0;i<n;i++)barrel(g,pos[i][0],.16+.44,pos[i][1]);return g}
+pallet(-3,-.6,.2,5);pallet(-2.9,.9,-.15,4);
+const pc=pallet(-1.8,1.14,0,3);
+const placed=barrel(pc,.3,.6,.3);
+
+// Fence
+const mc=document.createElement('canvas');mc.width=mc.height=16;{const x=mc.getContext('2d');x.strokeStyle='rgba(110,118,128,.95)';x.lineWidth=1.2;x.strokeRect(0,0,16,16)}
+const mtex=new THREE.CanvasTexture(mc);mtex.wrapS=mtex.wrapT=THREE.RepeatWrapping;
+function pst(px,pz,m=post){add(BX(.1,2.05,.1),m,px,1.02,pz);add(BX(.3,.02,.3),dark,px,.01,pz,S,false);add(BX(.14,.04,.14),m,px,2.06,pz)}
+function side(x1,z1,x2,z2){const L=Math.hypot(x2-x1,z2-z1),n=Math.max(1,Math.round(L/1.4)),a=Math.atan2(-(z2-z1),x2-x1);
+ for(let i=0;i<n;i++){const ax=x1+(x2-x1)*i/n,az=z1+(z2-z1)*i/n,bx=x1+(x2-x1)*(i+1)/n,bz=z1+(z2-z1)*(i+1)/n,l=L/n,cx=(ax+bx)/2,cz=(az+bz)/2;
+  const t=mtex.clone();t.needsUpdate=true;t.repeat.set(l/.1,18);
+  const m=new THREE.Mesh(new THREE.PlaneGeometry(l,1.8),new THREE.MeshBasicMaterial({map:t,transparent:true,alphaTest:.2,side:THREE.DoubleSide,opacity:.9}));
+  m.position.set(cx,1.05,cz);m.rotation.y=a;S.add(m);
+  [.15,1.05,1.95].forEach((h,k)=>{add(BX(l,k==1?.03:.05,.05),post,cx,h,cz).rotation.y=a})}
+ for(let i=0;i<=n;i++)pst(x1+(x2-x1)*i/n,z1+(z2-z1)*i/n)}
+side(-4.2,-2.8,4.2,-2.8);side(4.2,-2.8,4.2,-1.8);side(4.2,-.6,4.2,2.8);side(4.2,2.8,-4.2,2.8);
+// Gate panel by the light curtain (inside, with handle)
+side(-3.2,2.1,-3.2,.2);add(BX(.04,.3,.04),dark,-3.15,1,.4);
+// Light curtain
+[-2.8,-.7,1.4,2.8].forEach(z=>{pst(-4.2,z,yel);add(BX(.16,.25,.16),dark,-4.2,.15,z)});
+for(let i=0;i<6;i++){const b=add(CY(.012,5.6,8),red,-4.2,.3+i*.3,0,S,false);b.rotation.x=Math.PI/2}
+// Conveyor (passes through the right fence opening)
+const CX0=1.5,CX1=5.3,CM=(CX0+CX1)/2,CL=CX1-CX0;
+[-.4,.4].forEach(d=>add(BX(CL,.12,.06),post,CM,.84,-1.2+d));
+[CX0+.1,CM,CX1-.1].forEach(px=>[-.4,.4].forEach(d=>add(BX(.07,.8,.07),post,px,.4,-1.2+d)));
+[CX0+.1,CM,CX1-.1].forEach(px=>add(BX(.04,.04,.8),post,px,.15,-1.2));
+add(BX(.06,.3,.9),dark,CX0-.03,.98,-1.2);
+for(let i=0;i<=14;i++){const r=add(CY(.03,.76,12),M(0x8c949c,.4,.6),CX0+.1+i*.26,.87,-1.2,S,false);r.rotation.x=Math.PI/2}
+const cb=barrel(S,5.2,1.34,-1.2);
+// Overhead entrance sensor: a rod across the opening with a sensor in the middle; LED turns red when a barrel passes under it
+const sm=new THREE.MeshBasicMaterial({color:0x2ecc40}),SX=4.2;
+add(CY(.012,1.1,10),dark,SX,1.9,-1.2,S,false).rotation.x=Math.PI/2;
+[-1.75,-.65].forEach(z=>add(BX(.06,.07,.1),dark,SX,1.9,z));
+add(BX(.04,.07,.04),dark,SX,1.88,-1.2,S,false);add(BX(.2,.1,.12),dark,SX,1.84,-1.2);
+add(new THREE.SphereGeometry(.022,10,8),sm,SX,1.79,-1.2,S,false);
+
+// Robot (IRB-style)
+const wh=M(0xcdd2d7,.3,.85),rd=M(0xd1202a,.5);
+{const ec=document.createElement('canvas');ec.width=512;ec.height=256;const g=ec.getContext('2d'),gr=g.createLinearGradient(0,0,0,256);
+ [[0,'#ffffff'],[.42,'#e6ebf0'],[.5,'#aab3bb'],[.7,'#6b747d'],[1,'#3d444b']].forEach(([o,c])=>gr.addColorStop(o,c));g.fillStyle=gr;g.fillRect(0,0,512,256);
+ g.fillStyle='rgba(255,255,255,.95)';[40,170,300,430].forEach(x=>g.fillRect(x,40,34,70));
+ const et=new THREE.CanvasTexture(ec);et.mapping=THREE.EquirectangularReflectionMapping;
+ const pm=new THREE.PMREMGenerator(R);wh.envMap=pm.fromEquirectangular(et).texture;wh.envMapIntensity=1.1}
+const robot=new THREE.Group();S.add(robot);
+add(BX(1.3,.1,1.3),dark,0,.05,0,robot);add(CY(.62,.3),wh,0,.25,0,robot);
+const yaw=new THREE.Group();yaw.position.y=.4;robot.add(yaw);
+add(CY(.5,.3),wh,0,.15,0,yaw);add(BX(.9,1,.8),wh,-.2,.7,0,yaw);add(CY(.4,.8),wh,-.2,.7,0,yaw).rotation.x=Math.PI/2;
+add(BX(.3,.6,.3),dark,-.55,.5,0,yaw);
+const sh=new THREE.Group();sh.position.set(.15,.8,0);yaw.add(sh);
+add(CY(.36,.82),wh,0,0,0,sh).rotation.x=Math.PI/2;
+add(new THREE.CylinderGeometry(.3,.34,1.6,32),wh,0,.85,0,sh);
+add(new THREE.CylinderGeometry(.326,.326,.55,16,1,true,Math.PI/2-.55,1.1),new THREE.MeshStandardMaterial({color:0xd1202a,roughness:.5,side:THREE.DoubleSide}),0,.9,0,sh,false);
+const el=new THREE.Group();el.position.y=1.65;sh.add(el);
+add(CY(.3,.62),wh,0,0,0,el).rotation.x=Math.PI/2;
+const ua=add(new THREE.CylinderGeometry(.3,.3,1.5,32),wh,.75,0,0,el);ua.rotation.z=Math.PI/2;
+const SH=-.25,EL=.1;sh.rotation.z=SH;el.rotation.z=EL;
+const tool=new THREE.Group();tool.position.x=1.55;tool.rotation.z=-(SH+EL);el.add(tool);
+add(CY(.3,.64,36),wh,0,0,0,tool).rotation.x=Math.PI/2;[1,-1].forEach(k=>add(CY(.07,.02,16),dark,0,-.12,k*.322,tool,false).rotation.x=Math.PI/2);
+add(CY(.17,.2),wh,0,-.24,0,tool);add(CY(.21,.04),dark,0,-.36,0,tool);
+add(CY(.15,.08,24),wh,0,-.41,0,tool);add(BX(.14,.1,.14),wh,0,-.46,0,tool);add(CY(.1,.03,20),dark,0,-.49,0,tool);
+for(let i=0;i<3;i++){const f=new THREE.Group();f.rotation.y=i*2*Math.PI/3+Math.PI/2;tool.add(f);
+ add(BX(.24,.06,.1),wh,.2,-.41,0,f);add(BX(.05,.3,.12),wh,.35,-.56,0,f);
+ add(BX(.025,.16,.14),dark,.33,-.58,0,f,false);add(CY(.035,.14,12),dark,.35,-.43,0,f,false).rotation.x=Math.PI/2}
+const carried=barrel(tool,0,-.95,0);
+
+// Animation
+const K=[0,.22,.34,.42,.68,.78,.85,1],Y0=.615,Y1=-2.38;
+const KY=[Y0,Y0,Y0,Y0,Y1,Y1,Y1,Y0],KH=[2.5,2.5,1.89,2.5,2.5,1.15,2.5,2.5];
+const L1=1.65,L2=1.55;
+function ip(k,v,t){for(let i=0;i<k.length-1;i++)if(t<=k[i+1]){let u=(t-k[i])/(k[i+1]-k[i]);u=u*u*(3-2*u);return v[i]+(v[i+1]-v[i])*u}return v[v.length-1]}
+// 2-link IK in the arm's vertical plane: moves shoulder + elbow to put the gripper at radius R, height H
+function ik(R,H){const dx=R-.15,dy=H-.8,d=Math.min(Math.hypot(dx,dy),L1+L2-.01),c=Math.max(-1,Math.min(1,(d*d-L1*L1-L2*L2)/(2*L1*L2))),g=-Math.acos(c),
+ a=Math.atan2(dy,dx)-Math.atan2(L2*Math.sin(g),L1+L2*Math.cos(g)),p=a+g,s=a-Math.PI/2;
+ sh.rotation.z=s;el.rotation.z=p-s;tool.rotation.z=-p}
+let playing=!matchMedia('(prefers-reduced-motion: reduce)').matches,ph=0,last=performance.now();
+function pose(t){yaw.rotation.y=ip(K,KY,t);
+ const u=t>=.42&&t<=.68?(t-.42)/.26:t>=.85?(t-.85)/.15:0;
+ ik(2.08-.3*Math.sin(Math.PI*u),ip(K,KH,t));
+ carried.visible=t>=.34&&t<.78;placed.visible=t>=.78&&t<.92;
+ cb.visible=t<.34;cb.position.x=5.2-3.5*Math.min(1,t/.22);sm.color.set(cb.visible&&Math.abs(cb.position.x-SX)<.3?0xe01b24:0x2ecc40)}
+pose(0);
+// Orbit controls
+const home={az:-.45,el:.55,r:13};let o={...home};const tg=new THREE.Vector3(0,1.1,0);
+function place(){cam.position.set(tg.x+o.r*Math.sin(o.az)*Math.cos(o.el),tg.y+o.r*Math.sin(o.el),tg.z+o.r*Math.cos(o.az)*Math.cos(o.el));cam.lookAt(tg)}
+const ptr=new Map();let pd=0;
+cv.addEventListener('pointerdown',e=>{cv.setPointerCapture(e.pointerId);ptr.set(e.pointerId,[e.clientX,e.clientY]);pd=0});
+cv.addEventListener('pointerup',e=>ptr.delete(e.pointerId));cv.addEventListener('pointercancel',e=>ptr.delete(e.pointerId));
+cv.addEventListener('pointermove',e=>{const p=ptr.get(e.pointerId);if(!p)return;
+ if(ptr.size===1){o.az-=(e.clientX-p[0])*.006;o.el=Math.max(.05,Math.min(1.45,o.el+(e.clientY-p[1])*.006))}
+ else{const q=[...ptr.entries()].find(([k])=>k!==e.pointerId)[1];const d0=Math.hypot(p[0]-q[0],p[1]-q[1]),d1=Math.hypot(e.clientX-q[0],e.clientY-q[1]);o.r=Math.max(5,Math.min(24,o.r*d0/d1))}
+ ptr.set(e.pointerId,[e.clientX,e.clientY])});
+cv.addEventListener('wheel',e=>{e.preventDefault();o.r=Math.max(5,Math.min(24,o.r*(1+e.deltaY*.001)))},{passive:false});
+const bs='border:none;border-radius:10px;padding:6px 12px;font:600 12px system-ui,sans-serif;color:#e6ebf0;background:rgba(30,37,45,.85);border:1px solid #38424e;cursor:pointer';
+const bar=document.createElement('div');bar.style.cssText='position:absolute;left:10px;bottom:10px;display:flex;gap:8px';container.appendChild(bar);
+const pp=document.createElement('button'),rv=document.createElement('button');pp.style.cssText=rv.style.cssText=bs;rv.textContent='Reset view';bar.append(pp,rv);
+pp.onclick=()=>{playing=!playing;pp.textContent=playing?'Pause':'Play'};rv.onclick=()=>{o={...home}};pp.textContent=playing?'Pause':'Play';
+function size(){const w=container.clientWidth||1,h=container.clientHeight||1;R.setSize(w,h,false);cam.aspect=w/h;cam.fov=w<h?55:35;cam.updateProjectionMatrix()}
+new ResizeObserver(size).observe(container);size();theme();
+let on=false;(function loop(n){requestAnimationFrame(loop);if(!on)return;const dt=(n-last)/1000;last=n;
+ if(playing){ph=(ph+dt/16)%1;pose(ph)}
+ place();R.render(S,cam)})(performance.now());
+return{start(){last=performance.now();on=true;size()},stop(){on=false}};
+};
+</script>
+
+<script>
+  // ======================================================
+  // KONFIGURASI — UBAH BAGIAN INI SESUAI KEBUTUHAN
+  // ======================================================
+  // Warna interface (sesuai kode HTML kamu)
+  const TEMA_BIRU  = { accent:"#0055a6", text:"#0055a6", textDim:"#4d7fb0", glow:"rgba(0,85,166,0.15)" };
+  const TEMA_TEAL  = { accent:"#0d9695", text:"#0d9695", textDim:"#4aa5a4", glow:"rgba(13,150,149,0.15)" };
+  const TEMA_MERAH = { accent:"#0055a6", text:"#d7212e", textDim:"#b8525b", eyebrow:"#d7212e", glow:"rgba(0,85,166,0.15)" };
+
+  const LABEL_STD = "TEKAN SALAH SATU TOMBOL DI BAWAH";
+  const INTRO_STD = "Tekan salah satu tombol di bawah untuk mulai";
+  const HINT_POMPA  = "Timestamp diambil otomatis dari waktu HP/komputer kamu saat halaman dibuka. Video akan lompat ke bagian sesuai pompa yang dipilih lalu langsung diputar.";
+  const HINT_TOMBOL = "Timestamp diambil otomatis dari waktu HP/komputer kamu saat halaman dibuka. Video akan lompat ke bagian sesuai tombol yang dipilih lalu langsung diputar.";
+
+  // Tiap pompa:
+  //   nama  : nama di katalog          warna : (opsional) warna tulisan nama di katalog
+  //   foto  : "thumbnail/fotoN"       ui    : isi interface pompa
+  //   ui.judul / ui.sub : dua baris di header
+  //   ui.video   : path file video      ui.tema   : warna interface
+  //   ui.kolom   : jumlah kolom tombol di layar lebar (2 atau 3)
+  //   ui.tombol  : daftar tombol { name, startSeconds }  (detik mulai di video)
+  //                 { name, mode:"3d" } = tombol animasi 3D
+  //   (opsional) ui.label, ui.intro, ui.hint, ui.diakses, ui.awalan
+  const PUMPS = [
+    { nama:"Pompa FCM", foto:"thumbnail/foto1",
+      ui:{ judul:"FRISTAM", sub:"FCM", video:"pompa1/video-pompa.mp4", tema:TEMA_TEAL, kolom:3,
+        tombol:[
+          { name:"Fristam FCM",           startSeconds:5  },
+          { name:"General Specification", startSeconds:12 },
+          { name:"How it Works",          startSeconds:18 },
+          { name:"Changing shear size",   startSeconds:28 },
+          { name:"Disassembly",           startSeconds:35 }
+        ] } },
+
+    { nama:"Pompa FDS", foto:"thumbnail/foto2",
+      ui:{ judul:"FRISTAM", sub:"FDS", video:"pompa2/video-pompa.mp4", tema:TEMA_BIRU, kolom:3,
+        tombol:[
+          { name:"How it works",           startSeconds:6  },
+          { name:"General Specs",          startSeconds:11 },
+          { name:"Rotors and Disassembly", startSeconds:17 }
+        ] } },
+
+    { nama:"Fluivac", warna:"#d7212e", foto:"thumbnail/foto3",
+      ui:{ judul:"Fluidor", sub:"Fluivac", video:"fluivac/video-fluivac.mp4", tema:TEMA_MERAH, kolom:2,
+        tombol:[
+          { name:"Fluivac",              startSeconds:4  },
+          { name:"Design Specification", startSeconds:10 },
+          { name:"Push",                 startSeconds:18 },
+          { name:"Blow",                 startSeconds:26 },
+          { name:"Rinse",                startSeconds:37 },
+          { name:"Dry",                  startSeconds:43 },
+          { name:"Internal view",        startSeconds:47 }
+        ] } },
+
+    { nama:"ADLS", warna:"#d7212e", foto:"thumbnail/foto4",
+      ui:{ judul:"Fluidor", sub:"ADLS", video:"adls/adls-video.mp4", tema:TEMA_MERAH, kolom:2,
+        hint: HINT_TOMBOL + ' Tombol "3D render" menampilkan animasi 3D interaktif sebagai pengganti video.',
+        tombol:[
+          { name:"Fluidor ADLS",   startSeconds:4  },
+          { name:"How it works",   startSeconds:9  },
+          { name:"2D ilustration", startSeconds:14 },
+          { name:"3D render",      mode:"3d" }
+        ] } },
+
+    { nama:"Pompa FKL", foto:"thumbnail/foto5",
+      ui:{ judul:"FRISTAM", sub:"FKL", video:"pompa3/video-pompa.mp4", tema:TEMA_BIRU, kolom:3,
+        tombol:[
+          { name:"Fristam FKL",           startSeconds:6  },
+          { name:"General Specification", startSeconds:12 },
+          { name:"How it Works",          startSeconds:18 },
+          { name:"Shaft Disassembly",     startSeconds:28 },
+          { name:"CIP Capable",           startSeconds:46 },
+          { name:"Full Disassembly",      startSeconds:60 }
+        ] } },
+
+    { nama:"Pompa FDS NANO", foto:"thumbnail/foto6",
+      ui:{ judul:"FRISTAM", sub:"FDS Nano", video:"pompa4/video-pompa.mp4", tema:TEMA_BIRU, kolom:2,
+        tombol:[
+          { name:"FDS Nano",              startSeconds:4  },
+          { name:"General Specification", startSeconds:8  },
+          { name:"How it works",          startSeconds:11 },
+          { name:"Disassembly",           startSeconds:16 }
+        ] } },
+
+    { nama:"Pompa FSP Shearpump", foto:"thumbnail/foto7",
+      ui:{ judul:"FRISTAM", sub:"FSP", video:"pompa5/video-pompa.mp4", tema:TEMA_TEAL, kolom:3,
+        tombol:[
+          { name:"General Specification",  startSeconds:3  },
+          { name:"Rotors",                 startSeconds:7  },
+          { name:"General Specifications", startSeconds:12 },
+          { name:"Two Wing Rotor",         startSeconds:17 },
+          { name:"Disassembly",            startSeconds:30 }
+        ] } },
+
+    { nama:"Powder Mixer", foto:"thumbnail/foto8",
+      ui:{ judul:"FRISTAM", sub:"Powder Mixer", video:"pompa6/video-pompa.mp4", tema:TEMA_TEAL, kolom:3,
+        tombol:[
+          { name:"Fristam Powder Mixer",     startSeconds:6  },
+          { name:"Basic Size",               startSeconds:13 },
+          { name:"Powder Intake Chart",      startSeconds:17 },
+          { name:"How It Works",             startSeconds:23 },
+          { name:"On Field Use Ilustration", startSeconds:46 },
+          { name:"Disassembly",              startSeconds:55 }
+        ] } },
+
+    { nama:"BMPS Squeezer", warna:"#d7212e", foto:"thumbnail/foto9",
+      ui:{ judul:"Fluidor", sub:"BMPS Squeezer", video:"bmps/video-bmps.mp4", tema:TEMA_MERAH, kolom:2,
+        hint: HINT_TOMBOL,
+        tombol:[
+          { name:"Fluidor BMPS",       startSeconds:2  },
+          { name:"Bmps with conveyor", startSeconds:7  },
+          { name:"How it works",       startSeconds:13 },
+          { name:"CIP compatible",     startSeconds:53 }
+        ] } },
+
+    { nama:"BMPS-Paste", warna:"#d7212e", foto:"thumbnail/foto10",
+      ui:{ judul:"Fluidor", sub:"BMPS-Paste", video:"bmps-paste/bmps-paste-video.mp4", tema:TEMA_MERAH, kolom:2,
+        diakses:"Diakses pada", awalan:"Mulai dari ",
+        label:"Pilih topik video",
+        intro:"Pilih salah satu topik di bawah untuk memulai video",
+        hint:"Waktu akses diambil otomatis dari jam perangkat Anda saat halaman dibuka. Video akan langsung berpindah ke bagian yang dipilih dan diputar.",
+        tombol:[
+          { name:"Fluidor BMPS-Paste",       startSeconds:6  },
+          { name:"BMPS-Paste with Conveyor", startSeconds:10 },
+          { name:"How It Works",             startSeconds:14 },
+          { name:"On field use",             startSeconds:32 }
+        ] } },
+
+    { nama:"Pompa FK", foto:"thumbnail/foto11",
+      ui:{ judul:"FRISTAM", sub:"FK", video:"pompa7/video-pompa.mp4", tema:TEMA_BIRU, kolom:3,
+        tombol:[
+          { name:"Fristam FK",            startSeconds:5  },
+          { name:"General Specification", startSeconds:8  },
+          { name:"Rotors",                startSeconds:13 },
+          { name:"Single Wing Rotor",     startSeconds:20 },
+          { name:"Two Wing Rotor",        startSeconds:25 },
+          { name:"Disassembly",           startSeconds:31 }
+        ] } },
+
+    { nama:"Pompa FZ", foto:"thumbnail/foto12",
+      ui:{ judul:"FRISTAM", sub:"FZ", video:"pompa8/video-pompa.mp4", tema:TEMA_BIRU, kolom:3,
+        tombol:[
+          { name:"FZ Self Priming Centrifugal Pump", startSeconds:5  },
+          { name:"General Specs and how it works",   startSeconds:12 },
+          { name:"Disassembly",                      startSeconds:22 }
+        ] } },
+
+    { nama:"Pompa FL", foto:"thumbnail/foto13",
+      ui:{ judul:"FRISTAM", sub:"FL", video:"pompa9/video-pompa.mp4", tema:TEMA_BIRU, kolom:3,
+        label:"Pilih jenis rotor",
+        intro:"Pilih salah satu jenis rotor di bawah untuk mulai",
+        tombol:[
+          { name:"Twisted Rotors",     startSeconds:11 },
+          { name:"Bi-Wing Rotors",     startSeconds:33 },
+          { name:"Single Wing Rotors", startSeconds:54 }
+        ] } },
+
+    { nama:"Pompa FP", foto:"thumbnail/foto14",
+      ui:{ judul:"FRISTAM", sub:"FP", video:"pompa10/video-pompa.mp4", tema:TEMA_BIRU, kolom:3,
+        tombol:[
+          { name:"FP Centrifugal Pump",            startSeconds:3  },
+          { name:"General Specs and how it works", startSeconds:9  },
+          { name:"Disassembly",                    startSeconds:19 }
+        ] } }
+  ];
+
+  // ======================================================
+  // LOGIKA — tidak perlu diubah
+  // ======================================================
+  const $ = id => document.getElementById(id);
+  const esc = s => String(s).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+  const formatTime = sec => `${Math.floor(sec/60)}:${String(Math.floor(sec%60)).padStart(2,'0')}`;
+  const video = $('video'), nowPlaying = $('nowPlaying'), detail = $('detail');
+
+  // Cari foto dengan beberapa kemungkinan ekstensi
+  const EXTS = ['.jpg', '.jpeg', '.png', '.webp', '.JPG', '.JPEG', '.PNG'];
+  function loadThumb(src, alt, ok, fail){
+    const list = /\.[a-z0-9]{3,4}$/i.test(src) ? [src] : EXTS.map(e => src + e);
+    let i = 0;
+    const img = new Image();
+    img.alt = alt;
+    img.onload = () => ok(img);
+    img.onerror = () => { i++; if (i < list.length) img.src = encodeURI(list[i]); else fail(); };
+    img.src = encodeURI(list[0]);
+  }
+
+  // Pemberitahuan singkat
+  let toastTimer;
+  function toast(msg){
+    const t = $('toast');
+    t.textContent = msg;
+    t.classList.add('show');
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(() => t.classList.remove('show'), 2400);
+  }
+
+  // ---------- Katalog ----------
+  PUMPS.forEach((p, i) => {
+    const b = document.createElement('button');
+    b.className = 'item raised';
+    b.innerHTML = `<span class="avatar raised-sm"></span>
+                   <span class="name"${p.warna ? ` style="color:${p.warna}"` : ''}>${esc(p.nama)}</span>`;
+    const av = b.querySelector('.avatar');
+    loadThumb(p.foto, p.nama,
+      img => av.appendChild(img),
+      () => { av.innerHTML = `<span class="fallback pressed">${esc(p.nama.trim().charAt(0).toUpperCase())}</span>`; });
+    b.addEventListener('click', () => {
+      if (p.ui) location.hash = 'pompa-' + (i + 1);
+      else toast(`Interface ${p.nama} belum dimasukkan`);
+    });
+    $('list').appendChild(b);
+  });
+
+  // ---------- Interface pompa ----------
+  let scene3d = null, threeLoading = null;
+  function loadThree(){
+    if (window.THREE) return Promise.resolve();
+    if (!threeLoading) threeLoading = new Promise((ok, fail) => {
+      const el = document.createElement('script');
+      el.src = 'https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js';
+      el.onload = ok;
+      el.onerror = () => { threeLoading = null; fail(); };
+      document.head.appendChild(el);
+    });
+    return threeLoading;
+  }
+
+  // kembali ke tampilan video (menutup panel 3D)
+  function leave3d(){
+    if (scene3d) scene3d.stop();
+    $('scene3d').style.display = 'none';
+    video.style.display = '';
+  }
+
+  function showPump(i){
+    const ui = PUMPS[i].ui;
+    const t = ui.tema;
+    leave3d();
+
+    detail.style.setProperty('--accent', t.accent);
+    detail.style.setProperty('--text', t.text);
+    detail.style.setProperty('--text-dim', t.textDim);
+    detail.style.setProperty('--eyebrow', t.eyebrow || t.accent);
+    detail.style.setProperty('--glow', t.glow);
+    detail.style.setProperty('--cols', ui.kolom || 3);
+
+    $('dTitle').textContent = ui.judul;
+    $('dSub').textContent = ui.sub;
+    $('dLabel').textContent = ui.label || LABEL_STD;
+    $('clockLabel').textContent = ui.diakses || 'Diakses';
+    $('dHint').textContent = ui.hint || HINT_POMPA;
+
+    video.src = ui.video;
+    video.load();
+
+    nowPlaying.classList.remove('active');
+    nowPlaying.innerHTML = `<span class="dot"></span><span>${esc(ui.intro || INTRO_STD)}</span>`;
+
+    const grid = $('btnGrid');
+    grid.innerHTML = '';
+    ui.tombol.forEach(pump => {
+      const is3d = pump.mode === '3d';
+      const btn = document.createElement('button');
+
+      // Tombol kosong: tampil tapi tidak bisa diklik
+      if (pump.disabled){
+        btn.className = 'pump-btn raised-sm placeholder';
+        btn.disabled = true;
+        btn.innerHTML = `<span class="pump-name">&nbsp;</span><span class="pump-time">&nbsp;</span>`;
+        grid.appendChild(btn);
+        return;
+      }
+
+      btn.className = 'pump-btn raised-sm';
+      btn.innerHTML = `<span class="pump-name">${esc(pump.name)}</span>
+                       <span class="pump-time">${is3d ? 'tampilan 3D interaktif' : (ui.awalan || 'mulai ') + formatTime(pump.startSeconds)}</span>`;
+      btn.addEventListener('click', () => {
+        grid.querySelectorAll('.pump-btn').forEach(b => {
+          b.classList.remove('selected');
+          if (!b.classList.contains('placeholder')) b.classList.add('raised-sm');
+        });
+        btn.classList.remove('raised-sm');
+        btn.classList.add('selected');
+
+        if (is3d){
+          video.pause();
+          video.style.display = 'none';
+          $('scene3d').style.display = 'block';
+          loadThree().then(() => {
+            if (!scene3d) scene3d = Scene3D($('scene3d'));
+            if ($('scene3d').style.display === 'block') scene3d.start();
+          }).catch(() => toast('Animasi 3D gagal dimuat (perlu koneksi internet)'));
+        } else {
+          leave3d();
+          video.currentTime = pump.startSeconds;
+          video.play();
+        }
+
+        nowPlaying.classList.add('active');
+        nowPlaying.innerHTML = `<span class="dot"></span><span>${is3d ? 'Sedang ditampilkan' : 'Sedang diputar'}: <span class="label">${esc(pump.name)}</span></span>`;
+        console.log(`Dipilih: ${pump.name} pada ${new Date().toLocaleString('id-ID')}`);
+      });
+      grid.appendChild(btn);
+    });
+
+    $('catalog').classList.remove('show');
+    detail.classList.add('show');
+    window.scrollTo(0, 0);
+  }
+
+  function showCatalog(){
+    video.pause();
+    leave3d();
+    detail.classList.remove('show');
+    $('catalog').classList.add('show');
+    window.scrollTo(0, 0);
+  }
+
+  // Routing lewat hash: tombol Kembali dan tombol back HP/browser sama-sama ke katalog
+  function route(){
+    const m = location.hash.match(/^#pompa-(\d+)$/);
+    const i = m ? parseInt(m[1], 10) - 1 : -1;
+    if (i >= 0 && i < PUMPS.length && PUMPS[i].ui) showPump(i); else showCatalog();
+  }
+  window.addEventListener('hashchange', route);
+  $('kembali').addEventListener('click', () => { location.hash = ''; });
+  route();
+
+  // Jam waktu akses (real-time, waktu lokal perangkat)
+  function updateClock(){
+    $('clockTime').textContent = new Date().toLocaleString('id-ID', {
+      day:'2-digit', month:'2-digit', year:'numeric',
+      hour:'2-digit', minute:'2-digit', second:'2-digit'
+    });
+  }
+  updateClock();
+  setInterval(updateClock, 1000);
+</script>
+
+</body>
+</html>

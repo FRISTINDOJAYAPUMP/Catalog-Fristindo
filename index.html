@@ -327,22 +327,42 @@ return{start(){last=performance.now();on=true;size()},stop(){on=false}};
   //                 { name, mode:"3d" } = tombol animasi 3D
   //   (opsional) ui.label, ui.intro, ui.hint, ui.diakses, ui.awalan
   const PUMPS = [
-    { nama:"Pompa FCM", warna:"#0d9695", foto:"thumbnail/foto1",
-      ui:{ judul:"FRISTAM", sub:"FCM", video:"pompa1/video-pompa.mp4", tema:TEMA_TEAL, kolom:3,
-        tombol:[
-          { name:"Fristam FCM",           startSeconds:5  },
-          { name:"General Specification", startSeconds:12 },
-          { name:"How it Works",          startSeconds:18 },
-          { name:"Changing shear size",   startSeconds:28 },
-          { name:"Disassembly",           startSeconds:35 }
-        ] } },
-
     { nama:"Pompa FDS", foto:"thumbnail/foto2",
       ui:{ judul:"FRISTAM", sub:"FDS", video:"pompa2/video-pompa.mp4", tema:TEMA_BIRU, kolom:3,
         tombol:[
           { name:"How it works",           startSeconds:6  },
           { name:"General Specs",          startSeconds:11 },
           { name:"Rotors and Disassembly", startSeconds:17 }
+        ] } },
+
+    { nama:"Pompa FDS NANO", foto:"thumbnail/foto6",
+      ui:{ judul:"FRISTAM", sub:"FDS Nano", video:"pompa4/video-pompa.mp4", tema:TEMA_BIRU, kolom:2,
+        tombol:[
+          { name:"FDS Nano",              startSeconds:4  },
+          { name:"General Specification", startSeconds:8  },
+          { name:"How it works",          startSeconds:11 },
+          { name:"Disassembly",           startSeconds:16 }
+        ] } },
+
+    { nama:"Pompa FL", foto:"thumbnail/foto13",
+      ui:{ judul:"FRISTAM", sub:"FL", video:"pompa9/video-pompa.mp4", tema:TEMA_BIRU, kolom:3,
+        label:"Pilih jenis rotor",
+        intro:"Pilih salah satu jenis rotor di bawah untuk mulai",
+        tombol:[
+          { name:"Twisted Rotors",     startSeconds:11 },
+          { name:"Bi-Wing Rotors",     startSeconds:33 },
+          { name:"Single Wing Rotors", startSeconds:54 }
+        ] } },
+
+    { nama:"Pompa FK", foto:"thumbnail/foto11",
+      ui:{ judul:"FRISTAM", sub:"FK", video:"pompa7/video-pompa.mp4", tema:TEMA_BIRU, kolom:3,
+        tombol:[
+          { name:"Fristam FK",            startSeconds:5  },
+          { name:"General Specification", startSeconds:8  },
+          { name:"Rotors",                startSeconds:13 },
+          { name:"Single Wing Rotor",     startSeconds:20 },
+          { name:"Two Wing Rotor",        startSeconds:25 },
+          { name:"Disassembly",           startSeconds:31 }
         ] } },
 
     { nama:"Pompa FKL", foto:"thumbnail/foto5",
@@ -356,13 +376,30 @@ return{start(){last=performance.now();on=true;size()},stop(){on=false}};
           { name:"Full Disassembly",      startSeconds:60 }
         ] } },
 
-    { nama:"Pompa FDS NANO", foto:"thumbnail/foto6",
-      ui:{ judul:"FRISTAM", sub:"FDS Nano", video:"pompa4/video-pompa.mp4", tema:TEMA_BIRU, kolom:2,
+    { nama:"Pompa FP", foto:"thumbnail/foto14",
+      ui:{ judul:"FRISTAM", sub:"FP", video:"pompa10/video-pompa.mp4", tema:TEMA_BIRU, kolom:3,
         tombol:[
-          { name:"FDS Nano",              startSeconds:4  },
-          { name:"General Specification", startSeconds:8  },
-          { name:"How it works",          startSeconds:11 },
-          { name:"Disassembly",           startSeconds:16 }
+          { name:"FP Centrifugal Pump",            startSeconds:3  },
+          { name:"General Specs and how it works", startSeconds:9  },
+          { name:"Disassembly",                    startSeconds:19 }
+        ] } },
+
+    { nama:"Pompa FZ", foto:"thumbnail/foto12",
+      ui:{ judul:"FRISTAM", sub:"FZ", video:"pompa8/video-pompa.mp4", tema:TEMA_BIRU, kolom:3,
+        tombol:[
+          { name:"FZ Self Priming Centrifugal Pump", startSeconds:5  },
+          { name:"General Specs and how it works",   startSeconds:12 },
+          { name:"Disassembly",                      startSeconds:22 }
+        ] } },
+
+    { nama:"Pompa FCM", warna:"#0d9695", foto:"thumbnail/foto1",
+      ui:{ judul:"FRISTAM", sub:"FCM", video:"pompa1/video-pompa.mp4", tema:TEMA_TEAL, kolom:3,
+        tombol:[
+          { name:"Fristam FCM",           startSeconds:5  },
+          { name:"General Specification", startSeconds:12 },
+          { name:"How it Works",          startSeconds:18 },
+          { name:"Changing shear size",   startSeconds:28 },
+          { name:"Disassembly",           startSeconds:35 }
         ] } },
 
     { nama:"Pompa FSP Shearpump", warna:"#0d9695", foto:"thumbnail/foto7",
@@ -384,43 +421,6 @@ return{start(){last=performance.now();on=true;size()},stop(){on=false}};
           { name:"How It Works",             startSeconds:23 },
           { name:"On Field Use Ilustration", startSeconds:46 },
           { name:"Disassembly",              startSeconds:55 }
-        ] } },
-
-    { nama:"Pompa FK", foto:"thumbnail/foto11",
-      ui:{ judul:"FRISTAM", sub:"FK", video:"pompa7/video-pompa.mp4", tema:TEMA_BIRU, kolom:3,
-        tombol:[
-          { name:"Fristam FK",            startSeconds:5  },
-          { name:"General Specification", startSeconds:8  },
-          { name:"Rotors",                startSeconds:13 },
-          { name:"Single Wing Rotor",     startSeconds:20 },
-          { name:"Two Wing Rotor",        startSeconds:25 },
-          { name:"Disassembly",           startSeconds:31 }
-        ] } },
-
-    { nama:"Pompa FZ", foto:"thumbnail/foto12",
-      ui:{ judul:"FRISTAM", sub:"FZ", video:"pompa8/video-pompa.mp4", tema:TEMA_BIRU, kolom:3,
-        tombol:[
-          { name:"FZ Self Priming Centrifugal Pump", startSeconds:5  },
-          { name:"General Specs and how it works",   startSeconds:12 },
-          { name:"Disassembly",                      startSeconds:22 }
-        ] } },
-
-    { nama:"Pompa FL", foto:"thumbnail/foto13",
-      ui:{ judul:"FRISTAM", sub:"FL", video:"pompa9/video-pompa.mp4", tema:TEMA_BIRU, kolom:3,
-        label:"Pilih jenis rotor",
-        intro:"Pilih salah satu jenis rotor di bawah untuk mulai",
-        tombol:[
-          { name:"Twisted Rotors",     startSeconds:11 },
-          { name:"Bi-Wing Rotors",     startSeconds:33 },
-          { name:"Single Wing Rotors", startSeconds:54 }
-        ] } },
-
-    { nama:"Pompa FP", foto:"thumbnail/foto14",
-      ui:{ judul:"FRISTAM", sub:"FP", video:"pompa10/video-pompa.mp4", tema:TEMA_BIRU, kolom:3,
-        tombol:[
-          { name:"FP Centrifugal Pump",            startSeconds:3  },
-          { name:"General Specs and how it works", startSeconds:9  },
-          { name:"Disassembly",                    startSeconds:19 }
         ] } },
 
     // ================= PRODUK FLUIDOR (paling bawah) =================

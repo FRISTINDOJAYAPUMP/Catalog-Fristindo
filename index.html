@@ -345,28 +345,6 @@ return{start(){last=performance.now();on=true;size()},stop(){on=false}};
           { name:"Rotors and Disassembly", startSeconds:17 }
         ] } },
 
-    { nama:"Fluivac", warna:"#d7212e", foto:"thumbnail/foto3",
-      ui:{ judul:"Fluidor", sub:"Fluivac", video:"fluivac/video-fluivac.mp4", tema:TEMA_MERAH, kolom:2,
-        tombol:[
-          { name:"Fluivac",              startSeconds:4  },
-          { name:"Design Specification", startSeconds:10 },
-          { name:"Push",                 startSeconds:18 },
-          { name:"Blow",                 startSeconds:26 },
-          { name:"Rinse",                startSeconds:37 },
-          { name:"Dry",                  startSeconds:43 },
-          { name:"Internal view",        startSeconds:47 }
-        ] } },
-
-    { nama:"ADLS", warna:"#d7212e", foto:"thumbnail/foto4",
-      ui:{ judul:"Fluidor", sub:"ADLS", video:"adls/adls-video.mp4", tema:TEMA_MERAH, kolom:2,
-        hint: HINT_TOMBOL + ' Tombol "3D render" menampilkan animasi 3D interaktif sebagai pengganti video.',
-        tombol:[
-          { name:"Fluidor ADLS",   startSeconds:4  },
-          { name:"How it works",   startSeconds:9  },
-          { name:"2D ilustration", startSeconds:14 },
-          { name:"3D render",      mode:"3d" }
-        ] } },
-
     { nama:"Pompa FKL", foto:"thumbnail/foto5",
       ui:{ judul:"FRISTAM", sub:"FKL", video:"pompa3/video-pompa.mp4", tema:TEMA_BIRU, kolom:3,
         tombol:[
@@ -408,29 +386,6 @@ return{start(){last=performance.now();on=true;size()},stop(){on=false}};
           { name:"Disassembly",              startSeconds:55 }
         ] } },
 
-    { nama:"BMPS Squeezer", warna:"#d7212e", foto:"thumbnail/foto9",
-      ui:{ judul:"Fluidor", sub:"BMPS Squeezer", video:"bmps/video-bmps.mp4", tema:TEMA_MERAH, kolom:2,
-        hint: HINT_TOMBOL,
-        tombol:[
-          { name:"Fluidor BMPS",       startSeconds:2  },
-          { name:"Bmps with conveyor", startSeconds:7  },
-          { name:"How it works",       startSeconds:13 },
-          { name:"CIP compatible",     startSeconds:53 }
-        ] } },
-
-    { nama:"BMPS-Paste", warna:"#d7212e", foto:"thumbnail/foto10",
-      ui:{ judul:"Fluidor", sub:"BMPS-Paste", video:"bmps-paste/bmps-paste-video.mp4", tema:TEMA_MERAH, kolom:2,
-        diakses:"Diakses pada", awalan:"Mulai dari ",
-        label:"Pilih topik video",
-        intro:"Pilih salah satu topik di bawah untuk memulai video",
-        hint:"Waktu akses diambil otomatis dari jam perangkat Anda saat halaman dibuka. Video akan langsung berpindah ke bagian yang dipilih dan diputar.",
-        tombol:[
-          { name:"Fluidor BMPS-Paste",       startSeconds:6  },
-          { name:"BMPS-Paste with Conveyor", startSeconds:10 },
-          { name:"How It Works",             startSeconds:14 },
-          { name:"On field use",             startSeconds:32 }
-        ] } },
-
     { nama:"Pompa FK", foto:"thumbnail/foto11",
       ui:{ judul:"FRISTAM", sub:"FK", video:"pompa7/video-pompa.mp4", tema:TEMA_BIRU, kolom:3,
         tombol:[
@@ -466,6 +421,52 @@ return{start(){last=performance.now();on=true;size()},stop(){on=false}};
           { name:"FP Centrifugal Pump",            startSeconds:3  },
           { name:"General Specs and how it works", startSeconds:9  },
           { name:"Disassembly",                    startSeconds:19 }
+        ] } },
+
+    // ================= PRODUK FLUIDOR (paling bawah) =================
+    { nama:"Fluivac", warna:"#d7212e", foto:"thumbnail/foto3",
+      ui:{ judul:"Fluidor", sub:"Fluivac", video:"fluivac/video-fluivac.mp4", tema:TEMA_MERAH, kolom:2,
+        tombol:[
+          { name:"Fluivac",              startSeconds:4  },
+          { name:"Design Specification", startSeconds:10 },
+          { name:"Push",                 startSeconds:18 },
+          { name:"Blow",                 startSeconds:26 },
+          { name:"Rinse",                startSeconds:37 },
+          { name:"Dry",                  startSeconds:43 },
+          { name:"Internal view",        startSeconds:47 }
+        ] } },
+
+    { nama:"ADLS", warna:"#d7212e", foto:"thumbnail/foto4",
+      ui:{ judul:"Fluidor", sub:"ADLS", video:"adls/adls-video.mp4", tema:TEMA_MERAH, kolom:2,
+        hint: HINT_TOMBOL + ' Tombol "3D render" menampilkan animasi 3D interaktif sebagai pengganti video.',
+        tombol:[
+          { name:"Fluidor ADLS",   startSeconds:4  },
+          { name:"How it works",   startSeconds:9  },
+          { name:"2D ilustration", startSeconds:14 },
+          { name:"3D render",      mode:"3d" }
+        ] } },
+
+    { nama:"BMPS Squeezer", warna:"#d7212e", foto:"thumbnail/foto9",
+      ui:{ judul:"Fluidor", sub:"BMPS Squeezer", video:"bmps/video-bmps.mp4", tema:TEMA_MERAH, kolom:2,
+        hint: HINT_TOMBOL,
+        tombol:[
+          { name:"Fluidor BMPS",       startSeconds:2  },
+          { name:"Bmps with conveyor", startSeconds:7  },
+          { name:"How it works",       startSeconds:13 },
+          { name:"CIP compatible",     startSeconds:53 }
+        ] } },
+
+    { nama:"BMPS-Paste", warna:"#d7212e", foto:"thumbnail/foto10",
+      ui:{ judul:"Fluidor", sub:"BMPS-Paste", video:"bmps-paste/bmps-paste-video.mp4", tema:TEMA_MERAH, kolom:2,
+        diakses:"Diakses pada", awalan:"Mulai dari ",
+        label:"Pilih topik video",
+        intro:"Pilih salah satu topik di bawah untuk memulai video",
+        hint:"Waktu akses diambil otomatis dari jam perangkat Anda saat halaman dibuka. Video akan langsung berpindah ke bagian yang dipilih dan diputar.",
+        tombol:[
+          { name:"Fluidor BMPS-Paste",       startSeconds:6  },
+          { name:"BMPS-Paste with Conveyor", startSeconds:10 },
+          { name:"How It Works",             startSeconds:14 },
+          { name:"On field use",             startSeconds:32 }
         ] } }
   ];
 
